@@ -1,0 +1,45 @@
+body {
+    background-color: #f9f9f9;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+  }
+  
+  h1 {
+    font-weight: 300;
+  }
+  
+  .card {
+    border: none;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+  }
+  
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+  
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  
+  .card-text {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .btn {
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+  
+  .form-control {
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  
