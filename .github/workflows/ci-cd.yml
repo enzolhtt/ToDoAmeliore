@@ -1,26 +1,23 @@
-name: 🚀 Déploiement automatique SFTP
+name: Deploy to SFTP
 
 on:
   push:
     branches:
-      - main  # Déclenche à chaque push sur la branche main
+      - main
 
 jobs:
-  deploy:
+  ftp-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Récupération du code
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: 🚀 Déployer sur serveur SFTP
-      uses: SamKirkland/FTP-Deploy-Action@v4
-      with:
-        server: ${{ secrets.SFTP_HOST }}
-        username: ${{ secrets.SFTP_USERNAME }}
-        password: ${{ secrets.SFTP_PASSWORD }}
-        protocol: sftp
-        port: ${{ secrets.SFTP_PORT }}
-        local-dir: ./  # Le dossier local à déployer
-        server-dir: ${{ secrets.SFTP_REMOTE_DIR }}
-        dangerous-clean-slate: false  # Met à true si tu veux nettoyer le dossier distant avant
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v3
+        with:
+          server: ${{ secrets.SFTP_SERVER }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          protocol: sftp
+          local-dir: ./
+          server-dir: /chemin/vers/ton/dossier/
