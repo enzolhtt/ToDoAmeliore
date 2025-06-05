@@ -16,16 +16,16 @@ jobs:
       - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_TEST_KEY }}
 
       - name: Add VPS host to known_hosts
         run: |
-          ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ secrets.SFTP_SERVER }} >> ~/.ssh/known_hosts
 
       - name: Copy project files to VPS
         run: |
-          rsync -avz --delete ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/groupe4/
+          rsync -avz --delete ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/${{ secrets.SFTP_USERNAME }}/groupe4/
 
       - name: Run deploy script on VPS
         run: |
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /home/${{ secrets.SSH_USERNAME }}/groupe4 && bash deploy.sh"
+          ssh ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }} "cd /home/${{ secrets.SFTP_USERNAME }}/groupe4 && bash deploy.sh"
