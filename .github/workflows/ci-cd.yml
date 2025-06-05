@@ -1,4 +1,4 @@
-name: Deploy to SFTP
+name: Deploy to SFTP via rsync
 
 on:
   push:
@@ -6,17 +6,18 @@ on:
       - main
 
 jobs:
-  ftp-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v3.1.2
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          ftp-server: ftp://152.228.134.45
-          ftp-username: ${{ secrets.SFTP_USERNAME }}
-          ftp-password: ${{ secrets.SFTP_PASSWORD }}
-          local-dir: ./
-          git-ftp-args: --insecure --remote-root /home/debian/groupe4/
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy with rsync
+        run: |
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/debian/groupe4/
