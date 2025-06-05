@@ -19,4 +19,4 @@ jobs:
           ftp-username: ${{ secrets.SFTP_USERNAME }}
           ftp-password: ${{ secrets.SFTP_PASSWORD }}
           local-dir: ./
-          git-ftp-args: --insecure --remote-root /home/debian/groupe4/frontend
+          git-ftp-args: --insecure --remote-root /home/debian/groupe4/
