@@ -20,4 +20,4 @@ jobs:
 
       - name: Deploy with rsync
         run: |
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/debian/groupe4/
+          rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/debian/groupe4/
