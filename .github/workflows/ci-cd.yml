@@ -16,7 +16,7 @@ jobs:
       - name: Set up SSH agent and add private key
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_TEST_KEY }}
 
       - name: Check loaded SSH keys
         run: ssh-add -l
