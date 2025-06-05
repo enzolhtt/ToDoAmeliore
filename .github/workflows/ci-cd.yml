@@ -13,18 +13,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup SSH
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add VPS host to known_hosts
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
-          chmod 600 key.pem
-          mkdir -p ~/.ssh
-          # Ajoute la clé d'hôte à known_hosts
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Copy project files to VPS
         run: |
-          scp -i key.pem -r ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/groupe4
+          rsync -avz --delete ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/groupe4/
 
       - name: Run deploy script on VPS
         run: |
-          ssh -i key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /home/${{ secrets.SSH_USERNAME }}/groupe4 && bash deploy.sh"
+          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /home/${{ secrets.SSH_USERNAME }}/groupe4 && bash deploy.sh"
