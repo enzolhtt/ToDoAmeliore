@@ -18,4 +18,4 @@ jobs:
 
       - name: Copy project files to VPS
         run: |
-          sshpass -p "${{ secrets.SFTP_PASSWORD }}" rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/${{ secrets.SFTP_USERNAME }}/groupe4/
+          sshpass -p "${{ secrets.SFTP_PASSWORD }}" rsync -avz --exclude 'logs/' --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/${{ secrets.SFTP_USERNAME }}/groupe4/
