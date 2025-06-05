@@ -13,11 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up SSH key
+      - name: Set up SSH agent and add private key
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Check loaded SSH keys
+        run: ssh-add -l
+
       - name: Deploy with rsync
         run: |
-          rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/debian/groupe4/
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/debian/groupe4/
