@@ -1,26 +1,29 @@
-name: Deploy to SFTP via rsync
-
+name: Deploy to VPS
+ 
 on:
   push:
     branches:
-      - main
-
+      - main  # Déclenche le déploiement à chaque push sur "main"
+ 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+ 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set up SSH agent and add private key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_TEST_KEY }}
-
-      - name: Check loaded SSH keys
-        run: ssh-add -l
-
-      - name: Deploy with rsync
+ 
+      - name: Setup SSH
         run: |
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/debian/groupe4/
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
+          chmod 600 key.pem
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+ 
+      - name: Copy project files to VPS
+        run: |
+          scp -i key.pem -r ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USERNAME }}/groupe4
+ 
+      - name: Run deploy script on VPS
+        run: |
+          ssh -i key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /home/${{ secrets.SSH_USERNAME }}/groupe4 && bash deploy.sh"
