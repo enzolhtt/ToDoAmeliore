@@ -224,7 +224,7 @@ document.getElementById('ai-btn').addEventListener('click', async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer VOTRE_CLE_API'  // Remplacez par votre clé
+        'Authorization': 'Bearer lDjSUMl42HjxQ5TBxtZ18BhQvtUknU60'  // Remplacez par votre clé
       },
       body: JSON.stringify({
         model: "mistral-medium",  // ou mistral-small / mistral-large selon votre plan
