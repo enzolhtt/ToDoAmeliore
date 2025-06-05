@@ -24,8 +24,8 @@ jobs:
 
       - name: Copy project files to VPS
         run: |
-          rsync -avz --delete ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/${{ secrets.SFTP_USERNAME }}/groupe4/
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/${{ secrets.SFTP_USERNAME }}/groupe4/
 
       - name: Run deploy script on VPS
         run: |
-          ssh ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }} "cd /home/${{ secrets.SFTP_USERNAME }}/groupe4 && bash deploy.sh"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }} "cd /home/${{ secrets.SFTP_USERNAME }}/groupe4 && bash deploy.sh"
