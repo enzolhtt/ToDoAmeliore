@@ -1,31 +1,60 @@
-name: Deploy to VPS
-
-on:
-  push:
-    branches:
-      - main
-
+name: remote ssh command
+on: [push]
 jobs:
-  deploy:
+ 
+  build:
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup SSH agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_TEST_KEY }}
-
-      - name: Add VPS host to known_hosts
-        run: |
-          ssh-keyscan ${{ secrets.SFTP_SERVER }} >> ~/.ssh/known_hosts
-
-      - name: Copy project files to VPS
-        run: |
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }}:/home/${{ secrets.SFTP_USERNAME }}/groupe4/
-
-      - name: Run deploy script on VPS
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_SERVER }} "cd /home/${{ secrets.SFTP_USERNAME }}/groupe4 && bash deploy.sh"
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SFTP_SERVER }}
+        username: ${{ secrets.SFTP_USERNAME }}
+        password: ${{ secrets.SFTP_PASSWORD }}
+        port: ${{ secrets.SFTP_PORT }}
+        script: whoami
+ 
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SFTP_SERVER }}
+        username: ${{ secrets.SFTP_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SFTP_PORT }}
+        script: whoami
+ 
+    - name: multiple command
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SFTP_SERVER }}
+        username: ${{ secrets.SFTP_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SFTP_PORT }}
+        script: |
+          whoami
+          ls -al
+ 
+    # - name: stop script if command error
+    #   uses: appleboy/ssh-action@master
+    #   with:
+    #     host: ${{ secrets.HOST }}
+    #     username: ${{ secrets.USERNAME }}
+    #     key: ${{ secrets.KEY }}
+    #     port: ${{ secrets.PORT }}
+    #     script_stop: true
+    #     script: "mkdir abc/def,ls -al"
+ 
+    - name: pass environment
+      uses: appleboy/ssh-action@master
+      env:
+        FOO: "BAR"
+      with:
+        host: ${{ secrets.SFTP_SERVER }}
+        username: ${{ secrets.SFTP_USERNAME }}
+        key: ${{ secrets.SSH_TEST_KEY }}
+        port: ${{ secrets.SFTP_PORT }}
+        envs: FOO
+        script: |
+          echo "I am $FOO"
+          echo "I am $BAR"
