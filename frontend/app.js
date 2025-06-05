@@ -207,5 +207,70 @@ function exportTasks() {
   dlAnchorElem.click();
 }
 
+document.getElementById('ai-btn').addEventListener('click', async () => {
+  const text = taskInput.value.trim();
+  const mentalLoad = mentalLoadInput.value.trim();
+  const assignedTo = document.getElementById('assigned-to').value.trim();
+  const color = document.getElementById('task-color').value;
+
+  if (text === '') {
+    alert("Merci de saisir une tâche !");
+    return;
+  }
+
+  try {
+    // Appel à l'API Mistral (mock ici)
+    const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer VOTRE_CLE_API'  // Remplacez par votre clé
+      },
+      body: JSON.stringify({
+        model: "mistral-medium",  // ou mistral-small / mistral-large selon votre plan
+        messages: [
+          {
+            role: "system",
+            content: "Tu es un assistant qui aide à découper une tâche en sous-tâches claires et concises."
+          },
+          {
+            role: "user",
+            content: `Voici ma tâche principale : "${text}". Peux-tu me donner une liste de sous-tâches pour la réaliser ?`
+          }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    const aiText = data.choices[0].message.content;
+
+    // Découper la réponse en sous-tâches (ex: "- sous-tâche 1\n- sous-tâche 2\n...")
+    const sousTaches = aiText
+      .split('\n')
+      .map(line => line.replace(/^- /, '').trim())
+      .filter(line => line.length > 0);
+
+    // Ajoute chaque sous-tâche (ou la tâche principale s'il n'y a pas eu de découpage)
+    if (sousTaches.length > 0) {
+      sousTaches.forEach(st => {
+        ajouterTache(st, mentalLoad, assignedTo, color);
+      });
+    } else {
+      ajouterTache(text, mentalLoad, assignedTo, color);
+    }
+
+    // Réinitialiser les champs
+    taskInput.value = '';
+    mentalLoadInput.value = '';
+    document.getElementById('assigned-to').value = '';
+    document.getElementById('task-color').value = '#ffffff';
+
+  } catch (error) {
+    console.error(error);
+    alert("Une erreur est survenue lors de la génération des sous-tâches.");
+  }
+});
+
+
 // Initialiser
 renderTasks();
